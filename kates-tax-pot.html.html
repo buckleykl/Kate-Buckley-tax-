@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7b8f7a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kate's Tax Pot">
+<title>Kate's Private Care Tax Pot</title>
+<style>
+:root{
+  --sage:#7b8f7a;--sage-dark:#5d705d;--cream:#f7f4ec;--paper:#fffdf8;
+  --ink:#304037;--muted:#748078;--line:#dfe4dc;--rose:#c58e87;
+  --shadow:0 8px 24px rgba(48,64,55,.08);--radius:20px
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.4}
+.app{max-width:720px;margin:auto;padding:18px 16px 40px}
+header{padding:12px 4px 18px}
+h1{font-family:Georgia,serif;font-size:30px;font-weight:500;margin:0 0 4px}
+.subtitle{color:var(--muted);font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:12px 0;box-shadow:var(--shadow)}
+.card h2{font-family:Georgia,serif;font-size:20px;font-weight:500;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+input,select{width:100%;border:1px solid var(--line);background:white;border-radius:12px;padding:12px;font-size:16px;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--sage)}
+button{border:0;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:600;cursor:pointer}
+.primary{background:var(--sage);color:white}
+.secondary{background:#edf1eb;color:var(--sage-dark)}
+.danger{background:#f5e8e6;color:#8e514a}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#f2f4ee;border-radius:15px;padding:14px}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat strong{display:block;font-size:23px;margin-top:3px}
+.big{background:var(--sage);color:white;border-radius:18px;padding:18px;margin-bottom:12px}
+.big small{opacity:.8}.big strong{font-size:34px;display:block;margin-top:2px}
+.progress{height:12px;background:#e5e9e2;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress span{display:block;height:100%;background:var(--sage);width:0%;transition:width .3s}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row span:last-child{font-weight:600;text-align:right}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.note{font-size:12px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
+@media(max-width:430px){.grid{grid-template-columns:1fr}.app{padding:14px 12px 30px}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>Kate's Private Care Tax Pot</h1>
+  <div class="subtitle">A simple little dashboard for setting aside your tax.</div>
+</header>
+
+<section class="card">
+  <h2>This tax year</h2>
+  <div class="grid">
+    <div><label for="taxYear">Tax year</label>
+      <select id="taxYear">
+        <option>2026/27</option><option>2027/28</option><option>2028/29</option>
+      </select>
+    </div>
+    <div><label for="taxRate">Tax pot rate</label>
+      <select id="taxRate">
+        <option value="20">20%</option>
+        <option value="25" selected>25%</option>
+        <option value="30">30%</option>
+        <option value="35">35%</option>
+      </select>
+    </div>
+  </div>
+  <p class="note">This is a planning tool, not a tax calculation. Your actual UK tax and National Insurance can differ.</p>
+</section>
+
+<section class="card">
+  <h2>Add private-care income</h2>
+  <div class="grid">
+    <div><label for="date">Date</label><input id="date" type="date"></div>
+    <div><label for="amount">Amount received (£)</label><input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="130"></div>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <div><label for="description">Description</label><input id="description" placeholder="Care shift"></div>
+    <div><label for="days">Days / shifts</label><input id="days" type="number" inputmode="numeric" min="1" step="1" value="1"></div>
+  </div>
+  <div class="actions">
+    <button class="primary" id="addBtn">Add income</button>
+    <button class="secondary" id="clearForm">Clear</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Your dashboard</h2>
+  <div class="big">
+    <small>Suggested tax pot</small>
+    <strong id="taxPot">£0.00</strong>
+    <div class="note" style="color:#e8eee7">Based on your selected percentage.</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat"><small>Total income</small><strong id="totalIncome">£0.00</strong></div>
+    <div class="stat"><small>After tax-pot set-aside</small><strong id="afterPot">£0.00</strong></div>
+    <div class="stat"><small>Number of entries</small><strong id="entryCount">0</strong></div>
+    <div class="stat"><small>Average entry</small><strong id="average">£0.00</strong></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Tax-pot progress</h2>
+  <label for="potSaved">How much is currently sitting in your tax pot? (£)</label>
+  <input id="potSaved" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+  <div class="progress"><span id="progressBar"></span></div>
+  <div class="row"><span>Suggested pot</span><span id="progressTarget">£0.00</span></div>
+  <div class="row"><span>Already saved</span><span id="progressSaved">£0.00</span></div>
+  <div class="row"><span>Still to set aside</span><span id="progressRemaining">£0.00</span></div>
+</section>
+
+<section class="card">
+  <h2>Income entries</h2>
+  <div id="entries"><p class="note">No income entries yet.</p></div>
+  <div class="actions">
+    <button class="secondary" id="exportBtn">Export CSV</button>
+    <button class="danger" id="deleteAllBtn">Delete all entries</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Quick calculator</h2>
+  <div class="grid">
+    <div><label for="quickAmount">Income (£)</label><input id="quickAmount" type="number" inputmode="decimal" placeholder="160"></div>
+    <div><label for="quickRate">Set aside</label><select id="quickRate"><option>20</option><option selected>25</option><option>30</option><option>35</option></select></div>
+  </div>
+  <div class="stat-grid" style="margin-top:12px">
+    <div class="stat"><small>Tax pot</small><strong id="quickTax">£0.00</strong></div>
+    <div class="stat"><small>Left available</small><strong id="quickLeft">£0.00</strong></div>
+  </div>
+</section>
+
+<footer>Saved automatically on this iPhone/browser. Keep a separate backup using Export CSV.</footer>
+</div>
+
+<script>
+const KEY="katesPrivateCareTaxPot_v1";
+let state=JSON.parse(localStorage.getItem(KEY)||'{"entries":[],"potSaved":0,"taxYear":"2026/27","taxRate":25}');
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP"}).format(Number(n)||0);
+const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
+function render(){
+  $("taxYear").value=state.taxYear;
+  $("taxRate").value=state.taxRate;
+  $("potSaved").value=state.potSaved||"";
+  const total=state.entries.reduce((s,e)=>s+Number(e.amount),0);
+  const target=total*Number(state.taxRate)/100;
+  $("totalIncome").textContent=money(total);
+  $("taxPot").textContent=money(target);
+  $("afterPot").textContent=money(total-target);
+  $("entryCount").textContent=state.entries.length;
+  $("average").textContent=money(state.entries.length?total/state.entries.length:0);
+  $("progressTarget").textContent=money(target);
+  $("progressSaved").textContent=money(state.potSaved);
+  $("progressRemaining").textContent=money(Math.max(0,target-Number(state.potSaved)));
+  const pct=target?Math.min(100,Number(state.potSaved)/target*100):0;
+  $("progressBar").style.width=pct+"%";
+  const box=$("entries");
+  if(!state.entries.length){box.innerHTML='<p class="note">No income entries yet.</p>';return}
+  box.innerHTML=state.entries.slice().reverse().map((e,i)=>{
+    const actualIndex=state.entries.length-1-i;
+    return `<div class="row"><span><strong>${escapeHtml(e.description||"Care shift")}</strong><br><small>${e.date||""} · ${e.days||1} day(s)</small></span><span>${money(e.amount)}<br><button class="danger" style="padding:5px 8px;font-size:11px" onclick="removeEntry(${actualIndex})">Delete</button></span></div>`
+  }).join("");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+window.removeEntry=i=>{if(confirm("Delete this entry?")){state.entries.splice(i,1);save();render()}};
+$("date").value=new Date().toISOString().slice(0,10);
+$("addBtn").onclick=()=>{
+  const amount=Number($("amount").value);
+  if(!amount||amount<0){alert("Please enter an income amount.");return}
+  state.entries.push({date:$("date").value,amount,description:$("description").value.trim(),days:Number($("days").value)||1});
+  save(); $("amount").value="";$("description").value="";$("days").value=1;render();
+};
+$("clearForm").onclick=()=>{$("amount").value="";$("description").value="";$("days").value=1};
+$("taxRate").onchange=()=>{state.taxRate=Number($("taxRate").value);save();render()};
+$("taxYear").onchange=()=>{state.taxYear=$("taxYear").value;save()};
+$("potSaved").oninput=()=>{state.potSaved=Number($("potSaved").value)||0;save();render()};
+$("deleteAllBtn").onclick=()=>{if(confirm("Delete all income entries? This cannot be undone.")){state.entries=[];save();render()}};
+$("exportBtn").onclick=()=>{
+  const rows=[["Date","Description","Days/Shifts","Amount"],...state.entries.map(e=>[e.date,e.description,e.days,e.amount])];
+  const csv=rows.map(r=>r.map(x=>`"${String(x??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="kates-private-care-tax-pot.csv";a.click();URL.revokeObjectURL(url);
+};
+function quick(){
+  const a=Number($("quickAmount").value)||0,r=Number($("quickRate").value)||0;
+  $("quickTax").textContent=money(a*r/100);$("quickLeft").textContent=money(a-a*r/100);
+}
+$("quickAmount").oninput=quick;$("quickRate").onchange=quick;
+render();quick();
+</script>
+</body>
+</html>
